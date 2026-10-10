@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bvelt",
+  "main": "./worker.ts",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "triggers": {
+    "crons": ["0 8 * * *", "0 9 1 * *"]
+  },
+  "vars": {
+    "APP_URL": "https://bvelt.app",
+    "RESEND_FROM_EMAIL": "Bvelt <onboarding@resend.dev>",
+    "FIREBASE_PROJECT_ID": "localflowpro-20e3d",
+    "SENTRY_DSN": "https://548ff0f8215c0f5f0e37f11febafe338@o4511861895331840.ingest.us.sentry.io/4511861918662656"
+  }
+}

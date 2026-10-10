@@ -1,0 +1,203 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 0. Deny all by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 1. Global Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      // SECURITY RISK DOCUMENTATION:
+      // Hardcoded fallback email is preserved strictly for emergency owner recovery.
+      // Primary admin verification relies on verified /admins/{uid} documents.
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == "rainerblanco405@gmail.com"
+      );
+    }
+
+    // 2. Admin Collection
+    match /admins/{uid} {
+      allow read, write: if isAdmin();
+    }
+
+    // 3. Profiles and Subcollections
+    match /profiles/{userId} {
+      // Prohibit listing profiles of other tenants; allow get only for owner, admin, or explicit public profiles
+      allow get: if isOwner(userId) || isAdmin() || (resource != null && resource.data.isPublicProfile == true);
+      allow list: if isAdmin();
+      allow create: if (isOwner(userId) || isAdmin()) && (
+        isAdmin() ||
+        !request.resource.data.keys().hasAny(['isPro', 'plan', 'stripeCustomerId', 'subscriptionStatus'])
+      );
+      allow update: if (isOwner(userId) || isAdmin()) && (
+        isAdmin() ||
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isPro', 'plan', 'stripeCustomerId', 'subscriptionStatus'])
+      );
+      allow delete: if isAdmin();
+
+      match /scans/{scanId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /actions/{actionId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /checklist/{checklistId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // 4. Websites
+    match /websites/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // 5. Leads
+    match /leads/{leadId} {
+      allow list, get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if (isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin())) ||
+                   (!isSignedIn() && 
+                    request.resource.data.keys().hasAll(['userId', 'name', 'text', 'date', 'source']) &&
+                    request.resource.data.source == 'website' &&
+                    request.resource.data.userId is string && request.resource.data.userId.size() < 100 &&
+                    request.resource.data.name is string && request.resource.data.name.size() < 100 &&
+                    (!request.resource.data.keys().has('phone') || (request.resource.data.phone is string && request.resource.data.phone.size() < 50)) &&
+                    (!request.resource.data.keys().has('email') || (request.resource.data.email is string && request.resource.data.email.size() < 150)) &&
+                    request.resource.data.text is string && request.resource.data.text.size() < 1000 &&
+                    request.resource.data.date is string && request.resource.data.date.size() < 50 &&
+                    request.resource.data.source is string && request.resource.data.source.size() < 50
+                   );
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // 6. Transactions
+    match /transactions/{tId} {
+      allow list, get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // 7. Stats
+    match /stats/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 8. Usage Logs
+    match /usage_logs/{logId} {
+      allow create: if isSignedIn() && (request.resource.data.uid == request.auth.uid || isAdmin());
+      allow read, update, delete: if isSignedIn() && ((resource != null && resource.data.uid == request.auth.uid) || isAdmin());
+    }
+
+    match /usageLogs/{logId} {
+      allow create: if isSignedIn() && (request.resource.data.uid == request.auth.uid || isAdmin());
+      allow read, update, delete: if isSignedIn() && ((resource != null && resource.data.uid == request.auth.uid) || isAdmin());
+    }
+
+    // 9. Users and User Subcollections
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // 10. Root Actions
+    match /actions/{actionId} {
+      allow list, get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // 11. User Tokens
+    match /user_tokens/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 12. Slugs
+    match /slugs/{slugId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // 13. Behavior Profile
+    match /user_behavior_profile/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 14. Stripe & Subscriptions
+    match /customers/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      match /checkout_sessions/{id} {
+        allow read, write: if isOwner(uid) || isAdmin();
+      }
+      match /subscriptions/{id} {
+        allow read: if isOwner(uid) || isAdmin();
+      }
+      match /payments/{id} {
+        allow read: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    match /products/{id} {
+      allow read: if true;
+      match /prices/{id} {
+        allow read: if true;
+      }
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
+    }
+
+    // 15. BVELT Entity Memory (BEM)
+    match /bem_entities/{entityId} {
+      allow get: if true;
+      allow list, create, update, delete: if false;
+    }
+
+    match /bem_entities/{entityId}/history/{eventId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow create, update, delete: if false;
+    }
+
+    match /bem_entities/{entityId}/conflicts/{conflictId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow create, update, delete: if false;
+    }
+
+    match /users/{userId}/bem_private/{entityId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 16. Pools
+    match /dark_pool/{leadId} {
+      allow list, get: if isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || request.resource.data.ownerUid == request.auth.uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
+    match /leads_pool/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

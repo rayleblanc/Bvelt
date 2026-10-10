@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "include": [
+    "/api/*",
+    "/stripe-webhook",
+    "/api/stripe-webhook"
+  ],
+  "exclude": [
+    "/assets/*",
+    "/favicon.ico",
+    "/favicon.png",
+    "/favicon.svg",
+    "/manifest.json",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/sw.js",
+    "/bvelt-icon-192.png",
+    "/bvelt-icon-512.png",
+    "/apple-touch-icon.png",
+    "/apple-touch-icon-precomposed.png",
+    "/bvelt-icon-192.jpg",
+    "/bvelt-icon-512.jpg",
+    "/privacy.html",
+    "/terms.html",
+    "/legal.html"
+  ]
+}

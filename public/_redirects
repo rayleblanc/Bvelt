@@ -1,0 +1,2 @@
+# SPA fallback is handled by wrangler.jsonc assets.not_found_handling = "single-page-application"
+# Do not add /* or /templates/* rewrites to /index.html here

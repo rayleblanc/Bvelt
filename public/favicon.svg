@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="b-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="bolt-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Dark Container -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)" />
+  
+  <!-- Outer Glow Border -->
+  <rect x="16" y="16" width="480" height="480" rx="112" stroke="white" stroke-opacity="0.1" stroke-width="4" />
+
+  <!-- Bvelt Stylized 'B' with Integrated Lightning Bolt -->
+  <path d="M152 100H270C318 100 354 136 354 184C354 212 340 236 316 250C346 266 364 298 364 336C364 390 320 424 266 424H152V100Z" fill="url(#b-grad)" />
+  
+  <!-- Inner Top Loop Cutout -->
+  <path d="M200 148H264C286 148 304 164 304 184C304 204 286 220 264 220H200V148Z" fill="#0a0f1d" />
+  
+  <!-- Inner Bottom Loop Cutout -->
+  <path d="M200 280H268C292 280 312 298 312 324C312 350 292 368 268 368H200V280Z" fill="#0a0f1d" />
+
+  <!-- Central Lightning Bolt (Rayo de Poder Bvelt) -->
+  <path d="M276 168L220 270H284L236 364L324 246H260L296 168H276Z" fill="url(#bolt-grad)" stroke="#0a0f1d" stroke-width="6" stroke-linejoin="round" />
+</svg>

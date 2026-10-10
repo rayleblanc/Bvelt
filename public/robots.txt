@@ -1,0 +1,63 @@
+# Bvelt (bvelt.app) Robots.txt
+# Optimized for Search Engines, Generative AI Engines (GEO), and Crawlers
+
+User-agent: *
+Allow: /
+Allow: /templates/
+Disallow: /api/
+
+# Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+Allow: /templates/
+
+User-agent: Bingbot
+Allow: /
+Allow: /templates/
+
+User-agent: DuckDuckBot
+Allow: /
+Allow: /templates/
+
+# Generative AI Engines & GEO Crawlers
+User-agent: GPTBot
+Allow: /
+Allow: /templates/
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /templates/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /templates/
+
+User-agent: Claude-Web
+Allow: /
+Allow: /templates/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /templates/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /templates/
+
+User-agent: Meta-ExternalAgent
+Allow: /
+Allow: /templates/
+
+User-agent: ByteSpider
+Allow: /
+Allow: /templates/
+
+User-agent: CCBot
+Allow: /
+Allow: /templates/
+
+User-agent: Cohere-ai
+Allow: /
+Allow: /templates/
+
+Sitemap: https://bvelt.app/sitemap.xml

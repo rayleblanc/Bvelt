@@ -1,0 +1,215 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Business Profile",
+      "description": "User's business profile and settings",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Business name" },
+        "category": { "type": "string", "description": "Business category" },
+        "location": { "type": "string", "description": "Business location" },
+        "phone": { "type": "string", "description": "Business phone number" },
+        "gmbLink": { "type": "string", "description": "Google My Business link" },
+        "trustPoints": { "type": "number", "description": "User's trust points" },
+        "niche": { "type": "string", "description": "Business niche" },
+        "badges": { "type": "array", "items": { "type": "string" }, "description": "Business badges" },
+        "firstWeekChecklist": {
+          "type": "object",
+          "description": "First week launch plan milestone completion map"
+        },
+        "isPro": { "type": "boolean", "description": "Whether the user is on the Pro / paid plan" },
+        "plan": { "type": "string", "description": "Subscription plan type ('pro_monthly' or 'pro_annual')" },
+        "stripeCustomerId": { "type": "string", "description": "Stripe customer identifier" },
+        "subscriptionStatus": { "type": "string", "description": "Status of the subscription" },
+        "currentPeriodEnd": { "type": "number", "description": "Epoch timestamp when subscription period ends" },
+        "hasUsedTrial": { "type": "boolean", "description": "Whether user activated trial" },
+        "trialStartDate": { "type": "string", "description": "ISO date of trial start" },
+        "lat": { "type": "number", "description": "Business latitude" },
+        "lng": { "type": "number", "description": "Business longitude" },
+        "locationSource": { "type": "string", "description": "Source of location coordinate" },
+        "lastBattleRevenue": { "type": "number", "description": "Last battle revenue" },
+        "roi": { "type": "number", "description": "Calculated ROI" },
+        "tasks": { "type": "array", "description": "Gamification daily tasks list" },
+        "updatedAt": { "type": "string", "description": "Last update ISO timestamp" },
+        "notificationSettings": {
+          "type": "object",
+          "description": "Granular push notification preferences",
+          "properties": {
+            "newLeads": { "type": "boolean" },
+            "pendingReviews": { "type": "boolean" },
+            "priceAlerts": { "type": "boolean" }
+          }
+        },
+        "fcmToken": {
+          "type": "string",
+          "description": "Most recent registered FCM token for push notifications"
+        },
+        "fcmTokens": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Historical list of registered FCM tokens for the user's devices"
+        },
+        "services": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Multi-service offerings of the business (e.g. Lawn care, Pool cleaning)"
+        },
+        "features": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Business key features and capabilities"
+        }
+      },
+      "required": ["name", "category"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "A potential customer lead",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who owns this lead" },
+        "date": { "type": "string", "description": "Date of the lead" },
+        "text": { "type": "string", "description": "Original lead text" },
+        "urgency": { "type": "string", "description": "Urgency level" },
+        "size": { "type": "string", "description": "Estimated project size" },
+        "action": { "type": "string", "description": "Recommended action" },
+        "strategy": { "type": "string", "description": "Closing strategy" }
+      },
+      "required": ["userId", "text", "date"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial transaction",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who owns this transaction" },
+        "name": { "type": "string", "description": "Client name" },
+        "amount": { "type": "number", "description": "Transaction amount" },
+        "status": { "type": "string", "description": "Payment status", "enum": ["pendiente", "pagado"] },
+        "date": { "type": "string", "description": "Transaction date" }
+      },
+      "required": ["userId", "name", "amount", "status", "date"]
+    },
+    "Stats": {
+      "title": "User Stats",
+      "description": "Gamification stats like streaks",
+      "type": "object",
+      "properties": {
+        "streak": { "type": "number", "description": "Current usage streak" },
+        "lastActive": { "type": "string", "description": "Last active date ISO string" }
+      }
+    },
+    "DarkLead": {
+      "title": "Dark Pool Lead",
+      "description": "Shared lead available to all users",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "Lead content" },
+        "date": { "type": "string", "description": "Date shared" },
+        "originalOwner": { "type": "string", "description": "UID of the user who shared it" }
+      },
+      "required": ["text", "date"]
+    },
+    "UsageLog": {
+      "title": "Usage Log",
+      "description": "API and actions usage telemetry log",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "UID of logging user" },
+        "action": { "type": "string", "description": "Triggered action name" },
+        "timestamp": { "type": "string", "description": "Action timestamp" }
+      },
+      "required": ["uid", "action", "timestamp"]
+    },
+    "LeadsPool": {
+      "title": "Leads Pool Item",
+      "description": "Preloading leads pool for business lookup",
+      "type": "object",
+      "properties": {
+        "business_name": { "type": "string", "description": "Registered business name" },
+        "city": { "type": "string", "description": "Detected city" },
+        "niche": { "type": "string", "description": "Operating niche" }
+      },
+      "required": ["business_name", "city", "niche"]
+    },
+    "WebsiteConfig": {
+      "title": "Website Configuration",
+      "description": "Configuration for the business landing page",
+      "type": "object",
+      "properties": {
+        "heroTitle": { "type": "string" },
+        "heroSubtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "themeColor": { "type": "string" },
+        "published": { "type": "boolean" },
+        "lastUpdated": { "type": "string" }
+      },
+      "required": ["heroTitle", "heroSubtitle", "description", "published"]
+    },
+    "ActionRecord": {
+      "title": "Action Record",
+      "description": "Unified executable action record tracking status and outcome",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Action unique identifier" },
+        "userId": { "type": "string", "description": "User UID who owns this action" },
+        "type": { "type": "string", "description": "Type of action (e.g. whatsapp_outreach, maps_post, lead_contact, review_request)" },
+        "status": { "type": "string", "enum": ["todo", "in_progress", "done", "dismissed"], "description": "Status of the action" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" },
+        "doneAt": { "type": "string", "description": "ISO timestamp when marked done" },
+        "meta": { "type": "object", "description": "Action metadata and commercial results" }
+      },
+      "required": ["id", "type", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "profiles/{userId}": {
+      "schema": "Profile",
+      "description": "User profiles"
+    },
+    "actions": {
+      "schema": "ActionRecord",
+      "description": "Unified actions with persisted done state"
+    },
+    "users/{userId}/actions/{actionId}": {
+      "schema": "ActionRecord",
+      "description": "User-scoped actions"
+    },
+    "profiles/{userId}/actions/{actionId}": {
+      "schema": "ActionRecord",
+      "description": "Profile-scoped actions"
+    },
+    "leads": {
+      "schema": "Lead",
+      "description": "Collection of leads"
+    },
+    "transactions": {
+      "schema": "Transaction",
+      "description": "Collection of transactions"
+    },
+    "stats/{userId}": {
+      "schema": "Stats",
+      "description": "User gamification stats"
+    },
+    "dark_pool": {
+      "schema": "DarkLead",
+      "description": "Shared lead pool"
+    },
+    "usage_logs": {
+      "schema": "UsageLog",
+      "description": "Telemetry logs for actions"
+    },
+    "leads_pool": {
+      "schema": "LeadsPool",
+      "description": "Pre-filled lookup collection for business name"
+    },
+    "websites": {
+      "schema": "WebsiteConfig",
+      "description": "Collection of website configurations"
+    },
+    "user_tokens": {
+      "description": "Google OAuth tokens for GMB access"
+    }
+  }
+}
